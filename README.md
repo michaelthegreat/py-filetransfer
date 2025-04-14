@@ -15,3 +15,8 @@ focusing on using sockets to manage the lower-level transmission of data.
 - Must use Git/Github for version control
 - Cannot use external libraries, only Python standard library
 - Must handle command line arguments
+
+### Demo
+The below demo illustrates the file transfer being used to send a picture of goku between two different computers
+[Screencast from 04-13-2025 10:31:46 PM.webm](https://github.com/user-attachments/assets/d5e99b13-027a-4ace-995f-057d2655615e)
+
