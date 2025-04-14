@@ -10,6 +10,7 @@ import os
 CHUNK_SIZE = 4096  # 4KB
 
 def send_file(filename, ip, port):
+    print(f"sending file {filename} to {ip}:{port}")
     if not os.path.isfile(filename):
         print(f"Error: File '{filename}' not found.")
         return
@@ -18,7 +19,6 @@ def send_file(filename, ip, port):
     try:
         with socket.create_connection((ip, int(port))) as sock:
             print(f"Connected to {ip}:{port}. Sending file: {filename} ({filesize} bytes)")
-
             # Send filename and filesize first
             sock.sendall(f"{os.path.basename(filename)}|{filesize}".encode() + b'\n')
 
@@ -32,16 +32,15 @@ def send_file(filename, ip, port):
         
 
 def receive_file(ip, port):
+    print(f"Receiving file on {ip}:{port}")
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
             server_sock.bind((ip, int(port)))
             server_sock.listen(1)
             print(f"Listening on {ip}:{port}...")
-
             conn, addr = server_sock.accept()
             with conn:
                 print(f"Connection from {addr}")
-
                 # Read header (filename and filesize)
                 header = b''
                 while not header.endswith(b'\n'):
@@ -54,7 +53,7 @@ def receive_file(ip, port):
                 filesize = int(filesize)
                 print(f"Receiving file: {filename} ({filesize} bytes)")
 
-                with open(f"received_{filename}", 'wb') as f:
+                with open(f"{filename}", 'wb') as f:
                     bytes_received = 0
                     while bytes_received < filesize:
                         chunk = conn.recv(min(CHUNK_SIZE, filesize - bytes_received))
@@ -67,15 +66,11 @@ def receive_file(ip, port):
     except Exception as e:
         print(f"Error receiving file: {e}")
 
-    
-def print_usage():
-    print("Usage:")
-    print("  transmitter.py send <filename> <ip> <port>")
-    print("  transmitter.py recv <ip> <port>")
-
 def main():
     if len(sys.argv) < 2:
-        print_usage()
+        print("Invalid arguments. To use:")
+        print("transmitter.py send <filename> <ip> <port>")
+        print("transmitter.py recv <ip> <port>")
         return
 
     mode = sys.argv[1]
@@ -87,7 +82,9 @@ def main():
         _, _, ip, port = sys.argv
         receive_file(ip, port)
     else:
-        print_usage()
+        print("Invalid arguments. To use:")
+        print("transmitter.py send <filename> <ip> <port>")
+        print("transmitter.py recv <ip> <port>")
 
 if __name__ == "__main__":
     main()
