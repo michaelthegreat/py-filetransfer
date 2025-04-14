@@ -68,33 +68,26 @@ def receive_file(ip, port):
         print(f"Error receiving file: {e}")
 
     
+def print_usage():
+    print("Usage:")
+    print("  transmitter.py send <filename> <ip> <port>")
+    print("  transmitter.py recv <ip> <port>")
+
 def main():
-
     if len(sys.argv) < 2:
-        print("Usage: transmitter.py send <filename> <ip> <port>")
-        print("Filename can be in the form of a filepath")
-        print("       transmitter.py recv <ip> <port>")
-        sys.exit(1)
+        print_usage()
+        return
 
-    command = sys.argv[1]
+    mode = sys.argv[1]
 
-    if command == "send":
-        if len(sys.argv) != 5:
-            print("Usage: transmitter.py send <filename> <ip> <port>")
-            sys.exit(1)
-        filename = sys.argv[2]
-        ip = sys.argv[3]
-        port = int(sys.argv[4])
-        print(f"Sending {filename} to {ip}:{port}")
+    if mode == 'send' and len(sys.argv) == 5:
+        _, _, filename, ip, port = sys.argv
         send_file(filename, ip, port)
-    elif command == "recv":
-        if len(sys.argv) != 4:
-            print("Usage: transmitter.py recv <ip> <port>")
-            sys.exit(1)
-        ip = sys.argv[2]
-        port = int(sys.argv[3])
-        print(f"Receiving on {ip}:{port}")
+    elif mode == 'recv' and len(sys.argv) == 4:
+        _, _, ip, port = sys.argv
         receive_file(ip, port)
     else:
-        print("Invalid command. Use 'send' or 'recv'.")
-        sys.exit(1)
+        print_usage()
+
+if __name__ == "__main__":
+    main()
